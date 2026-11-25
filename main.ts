@@ -11,9 +11,13 @@ const LIE = "I kept a copy.";
 
 function gate(line: string): void {
   const wordCount = line.trim().split(/\s+/).filter(Boolean).length;
+  // Byte-length guard: multi-byte chars could pass the char count yet
+  // overflow the 88-char gate as bytes, so enforce the byte budget too.
+  const byteLength = Buffer.byteLength(line, "utf8");
   const ok =
     line.length >= 1 &&
     line.length <= 88 &&
+    byteLength <= 88 &&
     wordCount >= 1 &&
     wordCount <= 5 &&
     !line.includes("\n") &&
